@@ -1,52 +1,67 @@
 import Logo from "@/components/Logo";
-import { RiCopyrightFill } from "@remixicon/react";
-import { NavLink, Outlet } from "react-router";
+import { RiCopyrightLine } from "@remixicon/react";
+import { Link, NavLink, Outlet, useLocation } from "react-router";
 
 export default function RootLayout() {
+  const location = useLocation();
+  const contactPage = location.pathname === "/contact";
   return (
-    <>
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#F3F7FF]">
-        <div className="container mx-auto py-5 px-4 flex justify-between items-center">
+    <div>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow">
+        <div className="flex justify-between items-center container mx-auto py-5 px-4">
           <Logo />
-          <div className="flex gap-4 items-center">
-            <a href="#features" className="font-medium">
-              Features
-            </a>
-            <a href="#howitworks" className="font-medium">
-              How it works
-            </a>
-            {["contact"].map((item) => (
-              <NavLink
-                to={`/${item}`}
-                key={item}
-                className={({ isActive }) =>
-                  `hover:text-blue-500 transition-all duration-300 capitalize font-medium ${
-                    isActive ? "text-blue-500" : ""
-                  }`
-                }
+          {!contactPage && (
+            <>
+              <div className="gap-12 hidden md:flex">
+                <NavLink
+                  to="/#features"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById("features");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  <h1>Features</h1>
+                </NavLink>
+                <NavLink
+                  to="/#howitworks"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById("howitworks");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  <h1>How It Works</h1>
+                </NavLink>
+                <NavLink
+                  to="/contact"
+                  className={({ isActive }) =>
+                    isActive ? "text-blue-500" : "text-black"
+                  }
+                >
+                  <h1>Contact Us</h1>
+                </NavLink>
+              </div>
+              <Link
+                className="btn bg-blue-600 text-white hover:bg-blue-600"
+                to="/account/signup"
               >
-                {item.concat(" ", "Us")}
-              </NavLink>
-            ))}
-          </div>
-          <NavLink to="/account/signup">
-            <button className="btn bg-blue-500 hover:bg-blue-600 text-white">
-              Get Started
-            </button>
-          </NavLink>
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </div>
       <Outlet />
-      <div className="bg-blue-800 py-4">
-        <div className="container mx-auto py-5 px-4">
-          <div className="flex gap-1 items-center text-white">
-            <RiCopyrightFill size={18} />
-            <span className="text-sm">
-              {new Date().getFullYear()} Clinicare. All rights reserved.
-            </span>
-          </div>
+      <div className="bg-blue-800 text-white">
+        <div className="container mx-auto py-5 px-4 flex items-center justify-center font-bold gap-1 md:justify-start">
+          <>Copyright</>
+          <RiCopyrightLine size={18} />
+          <span className="text-sm">
+            {new Date().getFullYear()} Clinicare. All rights reserved.
+          </span>
         </div>
       </div>
-    </>
+    </div>
   );
 }

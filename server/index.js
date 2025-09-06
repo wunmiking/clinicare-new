@@ -30,7 +30,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:4800",
-      "https://clinicare-clientapp.vercel.app",
+      "https://clinicare-new-client.vercel.app",
     ], //allow request from client address
     credentials: true, //allow cookie to be sent
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"], //permitted http methods
