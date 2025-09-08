@@ -1,8 +1,8 @@
 import { RiCloseLine, RiMenuLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router";
-import { dashBoardLinks, roleBasedPathPermissions } from "../utils/constants";
 import Logout from "./Logout";
+import { dashBoardLinks, roleBasedPathPermissions } from "@/utils/constants";
 
 export default function Drawer({ user }) {
   const [open, setOpen] = useState(false);
@@ -12,22 +12,14 @@ export default function Drawer({ user }) {
   const path = location.pathname;
   const roles = ["patient", "doctor", "admin", "nurse", "staff"];
   const userRole = roles.find((role) => role === user?.role);
-  const isAuthorized =
-    (userRole === "admin" && roleBasedPathPermissions.admin.allowedSubpaths) ||
-    (userRole === "doctor" &&
-      roleBasedPathPermissions.doctor.allowedSubpaths) ||
-    (userRole === "patient" &&
-      roleBasedPathPermissions.patient.allowedSubpaths) ||
-    (userRole === "nurse" && roleBasedPathPermissions.nurse.allowedSubpaths);
 
   useEffect(() => {
-    const allowedPaths =
-      roleBasedPathPermissions[userRole]?.allowedSubpaths || [];
+    const allowedPaths = roleBasedPathPermissions[userRole]?.allowedSubpaths || [];
     const isPathAllowed = allowedPaths.includes(path);
-    if (!isAuthorized || !isPathAllowed) {
+    if (!userRole || !isPathAllowed) {
       navigate("/dashboard");
     }
-  }, [isAuthorized, navigate, path, userRole]);
+  }, [navigate, path, userRole]);
 
   return (
     <>
@@ -42,10 +34,7 @@ export default function Drawer({ user }) {
           onChange={toggleDrawer}
         />
         <div className="drawer-side">
-          <label
-            className="drawer-overlay"
-            onClick={() => setOpen(false)}
-          ></label>
+          <label className="drawer-overlay" onClick={() => setOpen(false)}></label>
           <div className="menu bg-base-200 text-base-content min-h-full w-[100vw] p-4">
             <button
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-4"
@@ -59,8 +48,8 @@ export default function Drawer({ user }) {
                 <div className="w-10 rounded-full bg-gray-300 text-gray-600">
                   {user?.avatar ? (
                     <img
-                      src={user?.avatar}
-                      alt={user?.fullname.split(" ")[0].charAt(0)}
+                      src={user.avatar}
+                      alt={user.fullname?.split(" ")[0]?.charAt(0)}
                       referrerPolicy="no-referrer"
                     />
                   ) : (
@@ -83,21 +72,15 @@ export default function Drawer({ user }) {
               {dashBoardLinks.map((item) => (
                 <div key={item.id}>
                   <p className="font-medium text-gray-500 p-3">
-                    {item.title === "Management" && userRole == "patient"
+                    {item.title === "Management" && userRole === "patient"
                       ? ""
                       : item.title}
                   </p>
                   <div className="flex flex-col">
                     {item.children
-                      ?.filter((child) => {
-                        if (
-                          roleBasedPathPermissions[userRole] &&
-                          isAuthorized?.includes(child.href)
-                        ) {
-                          return true;
-                        }
-                        return false;
-                      })
+                      ?.filter((child) =>
+                        roleBasedPathPermissions[userRole]?.allowedSubpaths.includes(child.href)
+                      )
                       .map((child) => (
                         <NavLink
                           to={child.href}
@@ -111,7 +94,6 @@ export default function Drawer({ user }) {
                             }`
                           }
                           onClick={toggleDrawer}
-                          viewTransition
                           end
                         >
                           <child.Icon />

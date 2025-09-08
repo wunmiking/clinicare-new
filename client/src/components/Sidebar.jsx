@@ -4,6 +4,7 @@ import { NavLink, useLocation, useNavigate } from "react-router";
 import Logout from "./Logout";
 import { useEffect } from "react";
 
+
 export default function Sidebar({ user }) {
   const location = useLocation();
   const navigate = useNavigate();
